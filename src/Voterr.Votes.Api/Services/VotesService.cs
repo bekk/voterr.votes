@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -12,25 +12,24 @@ namespace Voterr.Votes.Api.Services
     public class VotesService
     {
         private readonly CosmosClient _cosmosClient;
-        private readonly string _databaseId;
-        private readonly string _containerId;
+        private const string DatabaseId = "Voterr";
+        private const string ContainerId = "Votes";
 
         private readonly ItemRequestOptions _requestOptions = new()
         {
             ConsistencyLevel = ConsistencyLevel.Eventual,
         };
 
-        public VotesService(CosmosClient cosmosClient, string databaseId, string containerId)
+        public VotesService(CosmosClient cosmosClient)
         {
             _cosmosClient = cosmosClient;
-            _databaseId = databaseId;
-            _containerId = containerId;
         }
 
         public async Task<Vote> CastVote(int candidateId, string userObjectId, string userTenantId, CancellationToken cancellationToken)
         {
             var vote = new Vote()
             {
+                Id = Guid.NewGuid().ToString(),
                 CandidateId = candidateId,
                 VoterObjectId = userObjectId,
                 VoterTenantId = userTenantId
@@ -66,6 +65,6 @@ namespace Voterr.Votes.Api.Services
                 .ToListAsync(cancellationToken);
         }
 
-        private Container GetContainer() => _cosmosClient.GetContainer(_databaseId, _containerId);
+        private Container GetContainer() => _cosmosClient.GetContainer(DatabaseId, ContainerId);
     }
 }
