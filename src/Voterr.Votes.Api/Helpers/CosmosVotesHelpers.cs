@@ -10,7 +10,7 @@ namespace Voterr.Votes.Api.Helpers
     {
         public static async IAsyncEnumerable<Vote> ToAsyncEnumerable(this FeedIterator<Vote> feedIterator, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            while (feedIterator.HasMoreResults || !cancellationToken.IsCancellationRequested)
+            while (feedIterator.HasMoreResults && !cancellationToken.IsCancellationRequested)
             {
                 foreach (var vote in await feedIterator.ReadNextAsync(cancellationToken))
                 {
