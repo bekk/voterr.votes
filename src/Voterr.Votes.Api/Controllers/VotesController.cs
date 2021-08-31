@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.Resource;
+using Voterr.Votes.Api.Authorization;
 using Voterr.Votes.Api.Models;
 using Voterr.Votes.Api.Services;
 
@@ -25,6 +27,7 @@ namespace Voterr.Votes.Api.Controllers
         }
 
         [HttpPost]
+        [RequiredScope(Scopes.VotesCast)]
         public async Task<Vote> CastVote([FromBody] int candidateId, CancellationToken cancellationToken)
         {
             var displayName = User.GetDisplayName();
@@ -36,6 +39,7 @@ namespace Voterr.Votes.Api.Controllers
         }
 
         [HttpGet("my")]
+        [RequiredScope(Scopes.VotesReadMine)]
         public async Task<IEnumerable<Vote>> GetMyVotes(CancellationToken cancellationToken)
         {
             var displayName = User.GetDisplayName();
@@ -47,6 +51,7 @@ namespace Voterr.Votes.Api.Controllers
         }
         
         [HttpGet("all")]
+        [RequiredScope(Scopes.VotesReadAll)]
         public async Task<IEnumerable<Vote>> GetAllVotes(CancellationToken cancellationToken)
         {
             var displayName = User.GetDisplayName();
