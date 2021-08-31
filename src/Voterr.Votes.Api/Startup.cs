@@ -1,10 +1,13 @@
+using Azure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Identity.Web;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Voterr.Votes.Api.Services;
 
 namespace Voterr.Votes.Api
 {
@@ -22,7 +25,11 @@ namespace Voterr.Votes.Api
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
+            
+            services.AddSingleton(new CosmosClient(Configuration.GetConnectionString("Cosmos")));
 
+            services.AddTransient<VotesService>();
+            
             services.AddControllers();
         }
 
