@@ -65,6 +65,21 @@ namespace Voterr.Votes.Api.Services
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<List<CandidateVotes>> GetVotingResults(CancellationToken cancellationToken)
+        {
+            var query = new QueryDefinition("SELECT * FROM v");
+
+            var results = await GetContainer()
+                .GetItemQueryIterator<Vote>(query)
+                .ToAsyncEnumerable(cancellationToken)
+                .ToListAsync(cancellationToken);
+
+            return results
+                .GroupBy(v => v.CandidateId)
+                .Select(result => new CandidateVotes() {CandidateId = result.Key, VoteCount = result.Count()})
+                .ToList();
+        }
+
         private Container GetContainer() => _cosmosClient.GetContainer(DatabaseId, ContainerId);
     }
 }

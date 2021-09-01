@@ -49,7 +49,19 @@ namespace Voterr.Votes.Api.Controllers
             _logger.LogInformation("Retrieving votes casted by {DisplayName}, ObjectId {ObjectId} and TenantId {TenantId}", displayName, userObjectId, userTenantId);
             return await _votesService.GetVotesByUserIdAndTenantId(userObjectId, userTenantId, cancellationToken);
         }
-        
+
+        [HttpGet("results")]
+        [RequiredScope(Scopes.VotesReadResult)]
+        public async Task<IEnumerable<CandidateVotes>> GetResults(CancellationToken cancellationToken)
+        {
+            var displayName = User.GetDisplayName();
+            var userObjectId = User.GetObjectId();
+            var userTenantId = User.GetTenantId();
+            
+            _logger.LogInformation("Retrieving results for {DisplayName}, ObjectId {ObjectId} and TenantId {TenantId}", displayName, userObjectId, userTenantId);
+            return await _votesService.GetVotingResults(cancellationToken);
+        }
+
         [HttpGet("all")]
         [RequiredScope(Scopes.VotesReadAll)]
         public async Task<IEnumerable<Vote>> GetAllVotes(CancellationToken cancellationToken)
