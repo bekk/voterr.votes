@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Resource;
 using Voterr.Votes.Api.Authorization;
+using Voterr.Votes.Api.Dtos;
 using Voterr.Votes.Api.Models;
 using Voterr.Votes.Api.Services;
 
@@ -28,14 +29,20 @@ namespace Voterr.Votes.Api.Controllers
 
         [HttpPost]
         [RequiredScope(Scopes.VotesCast)]
-        public async Task<Vote> CastVote([FromBody] int candidateId, CancellationToken cancellationToken)
+        public async Task<IActionResult> CastVote(VoteDto vote, CancellationToken cancellationToken)
         {
             var displayName = User.GetDisplayName();
             var userObjectId = User.GetObjectId();
             var userTenantId = User.GetTenantId();
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("A sneaky user with name {DisplayName}, tried to do something funny");
+                return BadRequest(ModelState);
+            }
             
-            _logger.LogInformation("Casted vote for {CandidateId} by {DisplayName}, ObjectId {ObjectId} and TenantId {TenantId}", candidateId.ToString(), displayName, userObjectId, userTenantId);
-            return await _votesService.CastVote(candidateId, userObjectId, userTenantId, cancellationToken);
+            _logger.LogInformation("Casted vote for {CandidateId} by {DisplayName}, ObjectId {ObjectId} and TenantId {TenantId}", vote.CandidateId.ToString(), displayName, userObjectId, userTenantId);
+            return Ok(await _votesService.CastVote(vote.CandidateId, userObjectId, userTenantId, cancellationToken));
         }
 
         [HttpGet("my")]
