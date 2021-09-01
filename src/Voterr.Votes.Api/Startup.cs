@@ -7,6 +7,8 @@ using Microsoft.Identity.Web;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.FeatureManagement;
+using Voterr.Votes.Api.Extensions;
 using Voterr.Votes.Api.Services;
 
 namespace Voterr.Votes.Api
@@ -23,12 +25,23 @@ namespace Voterr.Votes.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
-            
+            services.AddFeatureManagement();
+
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
             
-            services.AddSingleton(new CosmosClient(Configuration.GetConnectionString("Cosmos")));
+            services.AddSingleton(sp =>
+            {
+	            var featureManager = sp.GetRequiredService<IFeatureManager>();
+
+	            if (featureManager.IsEnabled(FeatureFlags.UseManagedIdentity))
+	            {
+		            var cosmosUri = Configuration["CosmosUri"];
+		            return new CosmosClient(cosmosUri, new DefaultAzureCredential());
+	            }
+	            return new CosmosClient(Configuration.GetConnectionString("Cosmos"));
+            });
 
             services.AddTransient<VotesService>();
             
