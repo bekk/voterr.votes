@@ -32,7 +32,8 @@ namespace Voterr.Votes.Api.Services
                 Id = Guid.NewGuid().ToString(),
                 CandidateId = candidateId,
                 VoterObjectId = userObjectId,
-                VoterTenantId = userTenantId
+                VoterTenantId = userTenantId,
+                Timestamp = DateTime.Now,
             };
             
             var container = GetContainer();

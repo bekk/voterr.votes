@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace Voterr.Votes.Api.Models
@@ -15,5 +16,8 @@ namespace Voterr.Votes.Api.Models
         
         [JsonProperty("voterTenantId")]
         public string VoterTenantId { get; set; }
+        
+        [JsonProperty("timestamp")]
+        public DateTime Timestamp { get; set; }
     }
 }
