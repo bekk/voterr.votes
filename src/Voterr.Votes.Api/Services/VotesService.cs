@@ -38,7 +38,7 @@ namespace Voterr.Votes.Api.Services
             
             var container = GetContainer();
 
-            var result = await container.CreateItemAsync(vote, PartitionKey.None, _requestOptions, cancellationToken);
+            var result = await container.CreateItemAsync(vote, new PartitionKey(vote.Id), _requestOptions, cancellationToken);
 
             return result.Resource;
         }
