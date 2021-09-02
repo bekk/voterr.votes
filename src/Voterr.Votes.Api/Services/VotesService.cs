@@ -46,7 +46,7 @@ namespace Voterr.Votes.Api.Services
         public async Task<List<Vote>> GetVotesByUserIdAndTenantId(string userObjectId, string userTenantId, CancellationToken cancellationToken)
         {
             var query = new QueryDefinition(
-                "SELECT * FROM v WHERE v.VoterObjectId = @VoterObjectId AND v.VoterTenantId = @VoterTenantId")
+                "SELECT * FROM v WHERE v.voterObjectId = @VoterObjectId AND v.voterTenantId = @VoterTenantId")
                 .WithParameter("@VoterObjectId", userObjectId)
                 .WithParameter("@VoterTenantId", userTenantId);
 
