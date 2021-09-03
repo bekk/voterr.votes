@@ -1,11 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement;
 using Voterr.Votes.Api.Services;
 
 namespace Voterr.Votes.Api.Controllers
 {
+	[Authorize]
+	[ApiController]
 	[Route("api/status")]
 	public class StatusController : ControllerBase
 	{
